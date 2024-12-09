@@ -1740,3 +1740,7 @@
 2024-12-09 21:28:24,132 INFO:  * Restarting with stat [in C:\Users\Ruben\OneDrive\Documents\VS Code\Price Alert Flask\env\Lib\site-packages\werkzeug\_internal.py:97]
 2024-12-09 21:28:25,805 WARNING:  * Debugger is active! [in C:\Users\Ruben\OneDrive\Documents\VS Code\Price Alert Flask\env\Lib\site-packages\werkzeug\_internal.py:97]
 2024-12-09 21:28:25,808 INFO:  * Debugger PIN: 905-018-523 [in C:\Users\Ruben\OneDrive\Documents\VS Code\Price Alert Flask\env\Lib\site-packages\werkzeug\_internal.py:97]
+2024-12-09 22:47:52,912 INFO:  * Restarting with stat [in C:\Price Alert Flask\venv\Lib\site-packages\werkzeug\_internal.py:97]
+2024-12-09 22:47:54,312 WARNING:  * Debugger is active! [in C:\Price Alert Flask\venv\Lib\site-packages\werkzeug\_internal.py:97]
+2024-12-09 22:47:54,314 INFO:  * Debugger PIN: 782-032-252 [in C:\Price Alert Flask\venv\Lib\site-packages\werkzeug\_internal.py:97]
+2024-12-09 22:48:04,714 ERROR: The client is using an unsupported version of the Socket.IO or Engine.IO protocols (further occurrences of this error will be logged with level INFO) [in C:\Price Alert Flask\venv\Lib\site-packages\engineio\base_server.py:334]
