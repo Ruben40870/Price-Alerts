@@ -1,0 +1,58 @@
+{% extends "layouts.html" %}
+{% block content %}
+<div class="container mt-5 form-container" style="max-width:600px; margin:0 auto;">
+    <h1 class="text-center text-white mb-4">Add a New Price Alert</h1>
+
+    <!-- Add a Bootstrap rounded class for more rounded corners -->
+    <div class="bg-dark p-4 rounded-3">
+      <form action="{{ url_for('form') }}" method="POST">
+          <div class="mb-3">
+              <label for="name" class="form-label">Alert Name</label>
+              <input type="text" class="form-control bg-dark text-white" id="name" name="name" placeholder="Enter alert name" required>
+          </div>
+
+          <div class="mb-3">
+              <label for="type" class="form-label">Alert Type</label>
+              <select id="type" name="type" class="form-select bg-dark text-white" required>
+                  <option value="" disabled selected>Select alert type</option>
+                  <option value="Take Profit">Take Profit</option>
+                  <option value="Stop Loss Alert">Stop Loss Alert</option>
+              </select>
+          </div>
+
+          <div class="mb-3">
+              <label for="ticker" class="form-label">Stock Ticker</label>
+              <input type="text" class="form-control bg-dark text-white" id="ticker" name="ticker" placeholder="Enter stock ticker" required>
+          </div>
+
+          <div class="mb-3">
+              <label for="price" class="form-label">Amount</label>
+              <input type="number" class="form-control bg-dark text-white" id="price" name="price" step="0.01" placeholder="Enter amount" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="broker" class="form-label">Broker</label>
+            <select id="broker" name="broker" class="form-select bg-dark text-white" required>
+                <option value="" disabled selected>Select broker</option>
+                <option value="eToro">eToro</option>
+                <option value="Interactive Brokers">Interactive Brokers</option>
+            </select>
+          </div>
+        
+          <!-- Wrap button in a text-center div to center it -->
+          <div class="text-center">
+              <button type="submit" class="btn btn-primary d-inline-block">Submit Alert</button>
+          </div>
+      </form>
+    </div>
+
+    <h2 class="text-white mt-5">Existing Alerts</h2>
+    <ul class="list-group bg-dark rounded-3">
+      {% for alert in alerts %}
+          <li class="list-group-item bg-dark text-white">
+            {{ alert.name }} - {{ alert.ticker }} - ${{ "%.2f"|format(alert.price) }} - {{ alert.type }}
+          </li>
+      {% endfor %}
+    </ul>
+</div>
+{% endblock content %}

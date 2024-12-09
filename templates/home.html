@@ -1,0 +1,130 @@
+{% extends "layouts.html" %}
+{% block content %}
+<div class="container-fluid">
+    <h1 class="text-center text-white mb-4">Active Price Alerts</h1>
+
+    <!-- Search Bar -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-6">
+          <form action="{{ url_for('home') }}" method="GET">
+            <div class="row g-2">
+              <div class="col">
+                <input type="text" class="form-control bg-dark text-white rounded" name="search" placeholder="Search price alerts">
+              </div>
+              <div class="col-auto">
+                <button class="btn btn-primary rounded" type="submit">Search</button>
+              </div>
+            </div>
+          </form>
+        </div>
+    </div>
+
+    {% if alerts and alerts|length > 0 %}
+
+        <div class="row justify-content-center mt-4">
+            {% for alert in alerts %}
+            <div class="col-md-3 col-sm-6 d-flex align-items-stretch my-3">
+                <div class="card-container">
+                    <div class="card text-white bg-dark w-100 shadow-lg alert-card position-relative">
+                        <!-- Front Face of the Card -->
+                        <div class="card-front card-body">
+                            <h5 class="card-title">{{ alert.name }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ alert.ticker }}</h6>
+                            <p class="card-text">Price Alert Set: ${{ alert.price }}</p>
+                            <p class="card-text">Current Price: {% if alert.current_price %}${{ "%.2f"|format(alert.current_price) }}{% else %}N/A{% endif %}</p>
+                            <p class="card-text">Type: {{ alert.type }}</p>
+                            <p class="card-text">Broker: {{ alert.broker }}</p>
+                        </div>
+                        
+                        <!-- Back Face of the Card -->
+                        <div class="card-back card-body d-flex flex-column justify-content-center align-items-center">
+                            <button type="button" class="btn btn-sm btn-secondary mb-2"
+                                    data-bs-toggle="modal" data-bs-target="#editModal{{ alert.id }}">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <form action="{{ url_for('delete_alert', alert_id=alert.id) }}" method="post">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal for editing this specific alert -->
+                <div class="modal fade" id="editModal{{ alert.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ alert.id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" id="editModalDialog">
+                    <div class="modal-content bg-dark text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel{{ alert.id }}">Edit Alert</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ url_for('edit_alert', alert_id=alert.id) }}" method="POST" class="p-2">
+                        <div class="mb-3">
+                            <label for="nameEdit{{ alert.id }}" class="form-label">Alert Name</label>
+                            <input type="text" class="form-control bg-dark text-white" id="nameEdit{{ alert.id }}" name="name" value="{{ alert.name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="typeEdit{{ alert.id }}" class="form-label">Alert Type</label>
+                            <select id="typeEdit{{ alert.id }}" name="type" class="form-select bg-dark text-white" required>
+                            <option value="Take Profit" {% if alert.type == "Take Profit" %}selected{% endif %}>Take Profit</option>
+                            <option value="Stop Loss Alert" {% if alert.type == "Stop Loss Alert" %}selected{% endif %}>Stop Loss Alert</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tickerEdit{{ alert.id }}" class="form-label">Ticker</label>
+                            <input type="text" class="form-control bg-dark text-white" id="tickerEdit{{ alert.id }}" name="ticker" value="{{ alert.ticker }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="priceEdit{{ alert.id }}" class="form-label">Price</label>
+                            <input type="number" class="form-control bg-dark text-white" id="priceEdit{{ alert.id }}" name="price" step="0.01" value="{{ alert.price }}" required>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary d-inline-block">Update Alert</button>
+                        </div>
+                        </form>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                <!-- End Modal -->
+            </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <p class="text-center text-muted mt-4" style="font-size:1.2rem;">
+            No price alerts found. Add a new one to get started.
+        </p>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <form action="/form" method="get" class="d-inline-block">
+            <button type="submit" class="btn btn-primary">Add Price Alert</button>
+        </form>
+    </div>
+</div>
+
+<script>
+// Flip card by clicking the card itself
+document.querySelectorAll('.card-container').forEach(container => {
+    container.addEventListener('click', function(event) {
+        // Only toggle flip if clicked on the card-container directly (not on modal buttons)
+        if (!event.target.closest('.modal') && !event.target.matches('.btn-secondary') && !event.target.matches('.btn-danger')) {
+            container.classList.toggle('flipped');
+        }
+    });
+});
+
+// Click outside card to flip back
+document.addEventListener('click', function(event) {
+    // If user clicks outside any flipped card-container, flip it back
+    document.querySelectorAll('.card-container.flipped').forEach(flippedContainer => {
+        if(!flippedContainer.contains(event.target) && !event.target.closest('.modal')) {
+            flippedContainer.classList.remove('flipped');
+        }
+    });
+});
+</script>
+{% endblock content %}

@@ -1,0 +1,118 @@
+{% extends "layouts.html" %}
+{% block content %}
+
+<div class="container mt-5" style="max-width: 1000px;">
+    <h1 class="text-center text-white mb-4">Notifications Logs</h1>
+
+    <div class="table-responsive" style="overflow-x:hidden;">
+        <form action="{{ url_for('logs') }}" method="GET" class="mb-4">
+            <div class="row g-2 align-items-end">
+                <div class="col-sm-2">
+                    <label for="statusFilter" class="form-label">Status</label>
+                    <select id="statusFilter" name="status" class="form-select bg-dark text-white">
+                        <option value="">All</option>
+                        <option value="SENT" {% if request.args.get('status') == 'SENT' %}selected{% endif %}>SENT</option>
+                        <option value="FAILED" {% if request.args.get('status') == 'FAILED' %}selected{% endif %}>FAILED</option>
+                    </select>
+                </div>
+                <div class="col-sm-2">
+                    <label for="tickerFilter" class="form-label">Ticker</label>
+                    <input type="text" class="form-control bg-dark text-white" id="tickerFilter" name="ticker" value="{{ request.args.get('ticker', '') }}">
+                </div>
+                <div class="col-sm-2">
+                    <label for="nameFilter" class="form-label">Alert Name</label>
+                    <input type="text" class="form-control bg-dark text-white" id="nameFilter" name="name" value="{{ request.args.get('name', '') }}">
+                </div>
+                <div class="col-sm-2">
+                    <label for="typeFilter" class="form-label">Alert Type</label>
+                    <input type="text" class="form-control bg-dark text-white" id="typeFilter" name="type" value="{{ request.args.get('type', '') }}">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary rounded">Filter</button>
+                    <a href="{{ url_for('logs') }}" class="btn btn-secondary ms-2 rounded">Clear</a>
+                </div>
+            </div>
+        </form>
+
+        <table class="table table-dark table-striped table-bordered align-middle rounded-3">
+            <thead class="thead-light">
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Status</th>
+                    <th>Ticker</th>
+                    <th>Alert Name</th>
+                    <th>Alert Type</th>
+                    <th>Amount</th>
+                    <th>Current Price</th>
+                    <th>Broker</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in initial_logs %}
+                <tr class="{{ log.status | lower }}">
+                    <td>{{ log.timestamp.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                    <td>{{ log.status }}</td>
+                    <td>{{ log.ticker }}</td>
+                    <td>{{ log.name }}</td>
+                    <td>{{ log.type }}</td>
+                    <td>${{ "%.2f"|format(log.price) }}</td>
+                    <td>${{ "%.2f"|format(log.current_price) }}</td>
+                    <td>{{ log.broker }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination controls -->
+        <div class="d-flex justify-content-end align-items-center mt-3 mb-3">
+            <span class="text-white me-3">Page {{ page }}</span>
+            {% if prev_page %}
+            <a href="{{ url_for('logs', status=request.args.get('status'), ticker=request.args.get('ticker'), name=request.args.get('name'), type=request.args.get('type'), page=prev_page) }}" class="btn btn-secondary me-2 rounded">Previous</a>
+            {% endif %}
+            {% if next_page %}
+            <a href="{{ url_for('logs', status=request.args.get('status'), ticker=request.args.get('ticker'), name=request.args.get('name'), type=request.args.get('type'), page=next_page) }}" class="btn btn-secondary rounded">Next</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            var socket = io();
+
+            socket.on('connect', function() {
+                console.log('Connected to server');
+            });
+
+            socket.on('new_log', function(data) {
+                console.log('New log received:', data);
+
+                var logsTbody = document.querySelector('#logs tbody');
+                var tr = document.createElement('tr');
+                tr.classList.add(data.status.toLowerCase());
+
+                tr.innerHTML = `
+                    <td>${data.timestamp}</td>
+                    <td>${data.status}</td>
+                    <td>${data.ticker}</td>
+                    <td>${data.name}</td>
+                    <td>${data.type}</td>
+                    <td>$${data.price.toFixed(2)}</td>
+                    <td>$${data.current_price.toFixed(2)}</td>
+                `;
+
+                if (logsTbody.firstChild) {
+                    logsTbody.insertBefore(tr, logsTbody.firstChild);
+                } else {
+                    logsTbody.appendChild(tr);
+                }
+            });
+
+            socket.on('disconnect', function() {
+                console.log('Disconnected from server');
+            });
+        });
+    </script>
+
+{% endblock content %}

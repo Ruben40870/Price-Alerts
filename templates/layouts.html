@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link 
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" 
+      rel="stylesheet" 
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" 
+      crossorigin="anonymous"
+    >
+
+    <link 
+      rel="stylesheet" 
+      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" 
+      integrity="sha384-[correct-hash]" 
+      crossorigin="anonymous"
+    >
+
+    <link 
+      rel="stylesheet" 
+      type="text/css" 
+      href="{{ url_for('static', filename='main.css') }}"
+    >
+
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/stocks.png') }}">
+
+    {% if title %}
+        <title>Price Alert - {{ title }}</title>
+    {% else %}
+        <title>Price Alert</title>
+    {% endif %}
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container-fluid">
+          <a class="navbar-brand mr-4" href="/">Price Alert</a>
+          <button 
+            class="navbar-toggler" 
+            type="button" 
+            data-toggle="collapse" 
+            data-target="#navbarToggle" 
+            aria-controls="navbarToggle" 
+            aria-expanded="false" 
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              <a class="nav-item nav-link" href="/">Home</a>
+              <a class="nav-item nav-link" href="/logs">Logs</a>
+            </div>
+            <!-- Right-aligned logout link -->
+            <div class="navbar-nav ms-auto">
+              <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container mt-5">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="alert-container mb-3">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ 'danger' if category=='error' else category }} alert-dismissible fade show text-center" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock content %}
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script 
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" 
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" 
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+          var alerts = document.querySelectorAll('.alert');
+          alerts.forEach(function(alert) {
+              setTimeout(function() {
+                  var alertDismiss = new bootstrap.Alert(alert);
+                  alertDismiss.close();
+              }, 5000);
+          });
+      });
+    </script>
+
+  </body>
+</html>

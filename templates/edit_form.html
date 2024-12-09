@@ -1,0 +1,40 @@
+{% extends "layouts.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center text-white mb-4">Edit Alert</h1>
+    <form method="post">
+        <div class="mb-3">
+            <label for="name" class="form-label">Alert Name:</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ alert.name }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="ticker" class="form-label">Ticker:</label>
+            <input type="text" class="form-control" id="ticker" name="ticker" value="{{ alert.ticker }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="price" class="form-label">Price:</label>
+            <input type="text" class="form-control" id="price" name="price" value="{{ alert.price }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="brokerEdit" class="form-label">Broker</label>
+            <select id="brokerEdit" name="broker" class="form-select bg-dark text-white" required>
+                <option value="eToro" {% if alert.broker == 'eToro' %}selected{% endif %}>eToro</option>
+                <option value="Interactive Brokers" {% if alert.broker == 'Interactive Brokers' %}selected{% endif %}>Interactive Brokers</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="type" class="form-label">Alert Type:</label>
+            <select class="form-select" id="type" name="type" required>
+                <option value="Take Profit" {% if alert.type == "Take Profit" %}selected{% endif %}>Take Profit</option>
+                <option value="Stop Loss Alert" {% if alert.type == "Stop Loss Alert" %}selected{% endif %}>Stop Loss Alert</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Alert</button>
+    </form>
+</div>
+{% endblock content %}
